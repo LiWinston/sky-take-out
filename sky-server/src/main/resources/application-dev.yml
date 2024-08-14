@@ -5,9 +5,9 @@ sky:
     port: 3306
     database: sky_take_out
     username: root
-    password: root
+    password: lyc980820
   localoss:
-    dir-path: D:\Projects\skytakeaway\resources
+    dir-path: E:\Projects\skytakeaway\resources
   redis:
     host: localhost
     port: 6379
