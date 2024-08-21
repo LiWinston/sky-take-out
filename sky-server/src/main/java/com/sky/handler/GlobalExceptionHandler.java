@@ -4,10 +4,14 @@ import com.sky.constant.MessageConstant;
 import com.sky.exception.BaseException;
 import com.sky.result.Result;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 全局异常处理器，处理项目中抛出的业务异常
@@ -22,9 +26,9 @@ public class GlobalExceptionHandler {
      * @param ex
      * @return
      */
-    @ExceptionHandler
-    public Result exceptionHandler(BaseException ex) {
-        log.error("异常信息：{}", ex.getMessage());
+    @ExceptionHandler(BaseException.class)
+    public Result<?> exceptionHandler(BaseException ex) {
+        log.error("业务异常信息：{}", ex.getMessage());
         return Result.error(ex.getMessage());
     }
 
@@ -34,8 +38,8 @@ public class GlobalExceptionHandler {
      * @param ex
      * @return
      */
-    @ExceptionHandler
-    public Result exceptionHandler(SQLIntegrityConstraintViolationException ex) {
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    public Result<?> exceptionHandler(SQLIntegrityConstraintViolationException ex) {
         String message = ex.getMessage();
         if (message.contains("Duplicate entry")) {
             String username = message.split(" ")[2];
@@ -46,4 +50,20 @@ public class GlobalExceptionHandler {
         }
     }
 
+    /**
+     * 捕获参数验证异常
+     *
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Result<?> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return Result.error("参数验证失败", errors);
+    }
 }

@@ -3,6 +3,7 @@ package com.sky.result;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * 后端统一返回结果
@@ -32,6 +33,15 @@ public class Result<T> implements Serializable {
         Result result = new Result();
         result.msg = msg;
         result.code = 0;
+        return result;
+    }
+
+    // 新增方法：用于处理参数验证错误
+    public static <T> Result<T> error(String msg, Map<String, String> errors) {
+        Result<T> result = new Result<>();
+        result.msg = msg;
+        result.code = 0;
+        result.data = (T) errors; // 将错误详情作为数据返回
         return result;
     }
 
