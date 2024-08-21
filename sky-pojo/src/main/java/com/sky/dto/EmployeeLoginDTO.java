@@ -12,14 +12,13 @@ import java.io.Serializable;
 @ApiModel(description = "员工登录时传递的数据模型")
 public class EmployeeLoginDTO implements Serializable {
 
+    @NotBlank(message = "{validation.username.required}")
+    @Size(min = 3, max = 20, message = "{validation.username.length}")
     @ApiModelProperty("用户名")
-    @NotBlank(message = "用户名不能为空")
-    @Size(min = 3, max = 50, message = "用户名长度必须在 3 到 50 个字符之间")
     private String username;
 
+    @NotBlank(message = "{validation.password.required}")
+    @Size(min = 6, max = 50, message = "{validation.password.length}")
     @ApiModelProperty("密码")
-    @NotBlank(message = "密码不能为空")
-    @Size(min = 6, max = 100, message = "密码长度必须在 6 到 100 个字符之间")
     private String password;
-
 }
